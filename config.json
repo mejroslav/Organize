@@ -1,0 +1,108 @@
+{
+    "audio": {
+        "path": "music",
+        "extensions": [
+            "3ga",
+            "aac",
+            "ac3",
+            "aif",
+            "aiff",
+            "alac",
+            "amr",
+            "ape",
+            "au",
+            "dss",
+            "flac",
+            "flv",
+            "m4a",
+            "m4b",
+            "m4p",
+            "mp3",
+            "mpga",
+            "ogg",
+            "oga",
+            "mogg",
+            "opus",
+            "qcp",
+            "tta",
+            "voc",
+            "wav",
+            "wma",
+            "wv"
+        ]
+    },
+    "video": {
+        "path": "video",
+        "extensions": [
+            "webm",
+            "MTS",
+            "M2TS",
+            "TS",
+            "mov",
+            "mp4",
+            "m4p",
+            "m4v",
+            "mxf"
+        ]
+    },
+    "img": {
+        "path": "img",
+        "extensions": [
+            "jpg",
+            "jpeg",
+            "jfif",
+            "pjpeg",
+            "pjp",
+            "png",
+            "gif",
+            "webp",
+            "svg",
+            "apng",
+            "avif"
+        ]
+    },
+    "document": {
+        "path": "document",
+        "extensions": [
+            "pdf",
+            "djvu",
+            "doc",
+            "docx",
+            "md"
+        ]
+    },
+    "musescore": {
+        "path": "scores",
+        "extensions": [
+            "mscz"
+        ]
+    },
+    "zipfile": {
+        "path": "zips",
+        "extensions": [
+            "zip",
+            "rar"
+        ]
+    },
+    "executables": {
+        "path": "executables",
+        "extensions": [
+            "exe",
+            "msi",
+            "jar"
+        ]
+    },
+    "diskimages": {
+        "path": "diskimages",
+        "extensions": [
+            "iso",
+            "img"
+        ]
+    },
+    "mathematica": {
+        "path": "mathematica",
+        "extensions": [
+            "nb"
+        ]
+    }
+}
