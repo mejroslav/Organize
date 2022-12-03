@@ -1,0 +1,8 @@
+# venv
+Include/
+Lib/
+Scripts/
+pyvenv.cfg
+
+#vs code
+.vscode

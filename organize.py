@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
 """
-Tento skript umožní rozřadit soubory podle přípon do složek podle toho, zda je soubor obrázek, video, dokument, musescore nebo zip. 
+Tento skript umožní rozřadit soubory podle přípon do složek podle toho,
+zda je soubor obrázek, video, dokument, musescore nebo zip.
 """
 import os
 import shutil
-import time
+import json
+import argparse
+import enum
 
-
-class color:
+class Color(str, enum.Enum):
+    """
+    Console colors.
+    """
     PURPLE = '\033[95m'
     CYAN = '\033[96m'
     DARKCYAN = '\033[36m'
@@ -20,97 +25,124 @@ class color:
     UNDERLINE = '\033[4m'
     END = '\033[0m'
 
+# helper functions -
+def retry_on_err(err, msg = None):
+    """
+    Decorator for retrying function on specific error.
+    Message to be printed on error can be provided.
+    """
+    def wrapper(func):
+        def wrapped(*args, **kwargs):
+            fn_succ = False
+            while not fn_succ:
+                try:
+                    func(*args, **kwargs)
+                    fn_succ = True
+                except err:
+                    if msg:
+                        print(msg)
+                    continue
+        return wrapped
+    return wrapper
 
-suffices = {
-    "audio": (".3ga", ".aac", ".ac3", ".aif", ".aiff",
-         ".alac", ".amr", ".ape", ".au", ".dss",
-         ".flac", ".flv", ".m4a", ".m4b", ".m4p",
-         ".mp3", ".mpga", ".ogg", ".oga", ".mogg",
-         ".opus", ".qcp", ".tta", ".voc", ".wav",
-         ".wma", ".wv"),
-    "video": (".webm", ".MTS", ".M2TS", ".TS", ".mov",
-         ".mp4", ".m4p", ".m4v", ".mxf"),
-    "img": (".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png",
-       ".gif", ".webp", ".svg", ".apng", ".avif"),
-    "document": (".pdf", ".djvu", ".doc", ".docx"),
-    "musescore": (".mscz"),
-    "zipfile": (".zip")
-}
+@retry_on_err(OSError,
+f"{Color.RED}Složka neexistuje. Zadejte prosím existující složku.{Color.END}")
+def prompt_chdir():
+    """
+    Prompts user for new working directory.
+    """
+    print(f"{Color.PURPLE}Zadejte absolutní cestu do složky k roztřízení {Color.END}.")
+    print("Zanechte prázdné pro aktuální složku.")
+    adresa = input()
+    if adresa != "":
+        os.chdir(adresa)
 
-# U každého uživatele potřeba změnit!
-root_path = "/home/mir" 
-paths = {
-    "audio": "Music",
-    "video": "Videos",
-    "img": "Pictures",
-    "document": "Documents",
-    "musescore": "Documents/MuseScore3Development/Notové zápisy",
-    "zipfile": "Documents",
-}
+def read_config(cfg_file = "config.json") -> dict:
+    """
+    Reads config file and returns a extension and path dictionary.
+    """
+    with open(cfg_file, 'r', encoding='utf-8') as file:
+        cfg = json.load(file)
+    extensions = {}
+    paths = {}
+    for key, item in cfg.items():
+        for ext in item["extensions"]:
+            extensions[ext] = key
+        paths[key] = item["path"]
+    return (extensions, paths)
 
-
-def get_type_of_file(file_suffix: str) -> str:
-    '''
-    Vrací typ souboru ze slovníku suffices.
-    '''
-    for type in suffices:
-        if file_suffix in suffices[type]:
-            return type
-
-def path_for_file(filetype: str) -> str:
-    '''
-    Vrací cestu, kam bude soubor přesunut.
-    '''
-    return f"{root_path}/{paths[filetype]}/"
-
-def organize_files():
+def organize_files(root_path: str, suffices: dict,
+    paths: dict, dry_run: bool = False):
+    """
+    Moves file according to suffix and path dictionary.
+    """
+    dry_run_paths = set()
     for file in os.listdir():
         try:
             file_suffix = os.path.splitext(file)[1]
-            file_type = get_type_of_file(file_suffix)
-            path = path_for_file(file_type)
-            shutil.move(file, path)
+            if not file_suffix:
+                continue
+
+            file_type = suffices.get(file_suffix[1:].lower(), None)
+            if file_type is None:
+                continue
+
+            path = os.path.join(root_path, paths[file_type])
+            if (not os.path.exists(path)) and (not os.path.isdir(path)):
+                if not dry_run:
+                    os.makedirs(path)
+                if dry_run and (paths[file_type] not in dry_run_paths):
+                    dry_run_paths.add(paths[file_type])
+                    print(f"{Color.RED}DRY RUN - Vytvoření složky: {path}{Color.END}")
+
+            if not dry_run:
+                shutil.move(file, path)
             print(f"Soubor {file} je typu {file_type} a je přesunut do složky {paths[file_type]}")
         except OSError as err:
-            print(f"{color.RED}Soubor {file} z nějakého důvodu nelze přesunout:{color.END}")
+            print(f"{Color.RED}Soubor {file} z nějakého důvodu nelze přesunout:{Color.END}")
             print(err)
-
-
-def set_directory():
-    adresa = input("""Zadejte absolutní cestu do složky, ze které chcete roztřídit soubory (ENTER pro aktuální adresu): """)
-    if adresa != "":
-        try:
-            os.chdir(adresa)
-        except OSError as err:
-            print("Zadaná cesta není platná. Zkuste to znovu.")
-            set_directory()
-
-
 
 # MAIN PROGRAM
 
-def main():
+def main(args):
+    """
+    Main program.
+    """
+    # read config
+    (suffices, paths) = read_config(args.config)
     # intro
-    print(f"{color.GREEN}{color.BOLD}ORGANIZE{color.END}")
+    print(f"{Color.GREEN}{Color.BOLD}ORGANIZE{Color.END}")
     print("Autor: Miroslav Burýšek")
-    print("Tento program třídí soubory na hudbu, obrázky, filmy, dokumenty, zip, musescore a ostatní.")
+    print(
+    "Tento program třídí soubory na hudbu, obrázky, filmy, dokumenty, zip, musescore a ostatní.")
+
+    if args.dry_run:
+        print(f"{Color.RED}DRY RUN - Změny nebudou provedeny{Color.END}")
 
     # přechod do složky
-    set_directory()
-    print("""Nacházím se ve složce: """ + color.PURPLE +
-          color.BOLD + os.getcwd() + color.END)
+    prompt_chdir()
+    print(f"Nacházím se ve složce: {Color.PURPLE}{Color.BOLD}{os.getcwd()}{Color.END}")
+
+    if not args.dry_run:
+        approval = ("y", "yes")
+        approval_input = input("Přejete si roztřídit soubory? [Y/n] ").lower()
+
+        if approval_input not in approval: # task declined
+            print("Dobře. Hezký den i Vám.")
+            return
 
     # třídění
-    decline_task = ("n", "nn", "ne", "no", "stop", "end", "konec")
-    user_approval = input("""Přejete si roztřídit soubory? [Y/n] """).lower()
-
-    if user_approval in decline_task: # task declined
-        print("Dobře. Hezký den i Vám.")
-        exit()
-    else:
-        organize_files()
-        print(color.BOLD + color.GREEN + "Soubory úspěšně přesunuty. Přeji hezký den.")
+    organize_files(args.root or os.getcwd(), suffices, paths, args.dry_run)
+    if not args.dry_run:
+        print(f"{Color.BOLD}{Color.GREEN}Soubory úspěšně přesunuty. Přeji hezký den.{Color.END}")
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        description="Tento skript umožní rozřadit soubory podle přípon do složek podle nastavení."
+    )
+    parser.add_argument('--dry-run', default=False, required=False, action='store_true')
+    parser.add_argument('--config', type=str, default="config.json", required=False)
+    parser.add_argument('--root', type=str, default=None, required=False)
+    pargs = parser.parse_args()
+    main(pargs)
