@@ -71,8 +71,8 @@ def read_config(cfg_file = "config.json") -> dict:
         paths[key] = item["path"]
     return (extensions, paths)
 
-def organize_files(root_path: str, suffices: dict[str, str],
-    paths: dict[str, str], dry_run: bool = False):
+def organize_files(root_path: str, suffices: dict,
+    paths: dict, dry_run: bool = False):
     """
     Moves file according to suffix and path dictionary.
     """
