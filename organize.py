@@ -22,6 +22,7 @@ class color:
 
 
 suffices = {
+    "directory": (""),
     "audio": (".3ga", ".aac", ".ac3", ".aif", ".aiff",
          ".alac", ".amr", ".ape", ".au", ".dss",
          ".flac", ".flv", ".m4a", ".m4b", ".m4p",
@@ -32,7 +33,7 @@ suffices = {
          ".mp4", ".m4p", ".m4v", ".mxf", ".avi"),
     "img": (".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png",
        ".gif", ".webp", ".svg", ".apng", ".avif"),
-    "document": (".pdf", ".djvu", ".doc", ".docx", ".odt"),
+    "document": (".pdf", ".djvu", ".doc", ".docx", ".odt", ".html", ".css", ".pptx", ".md", ".chm"),
     "musescore": (".mscz"),
     "zipfile": (".zip")
 }
@@ -40,6 +41,7 @@ suffices = {
 # U každého uživatele potřeba změnit!
 root_path = os.path.expanduser("~") 
 paths = {
+    "directory": "Documents",
     "audio": "Music",
     "video": "Videos",
     "img": "Pictures",
@@ -70,10 +72,13 @@ def organize_files():
             file_type = get_type_from_sfx(file_suffix)
             path = get_path_from_ftype(file_type)
             shutil.move(file, path)
-            print(f"Soubor {file} je typu {file_type} a je přesunut do složky {paths[file_type]}")
+            print(f"name: {file}, type: {file_type}, destination: {paths[file_type]}")
         except OSError as err:
-            print(f"{color.RED}Soubor {file} z nějakého důvodu nelze přesunout:{color.END}")
+            print(f"name: {file} {color.RED}nelze přesunout{color.END}")
             print(err)
+        except KeyError as err:
+            print(f"name:{file}, {color.YELLOW}neznámý typ souboru{color.END}")
+            
 
 
 def set_directory():
@@ -139,6 +144,7 @@ if __name__ == '__main__':
         if sys.argv[1] in {"-h", "--help"}:
             print("Program Organize třídí soubory podle přípon do jednotlivých složek.")
             print(f"""Seznam cest:
+            Složky: {get_path_from_ftype("directory")}
             Obrázky: {get_path_from_ftype("img")}
             Videa: {get_path_from_ftype("video")}
             Audio: {get_path_from_ftype("audio")}
