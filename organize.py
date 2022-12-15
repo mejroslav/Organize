@@ -30,7 +30,7 @@ suffices = {
          ".opus", ".qcp", ".tta", ".voc", ".wav",
          ".wma", ".wv"),
     "video": (".webm", ".MTS", ".M2TS", ".TS", ".mov",
-         ".mp4", ".m4p", ".m4v", ".mxf", ".avi"),
+         ".mp4", ".m4p", ".m4v", ".mxf", ".avi", ".mkv"),
     "img": (".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png",
        ".gif", ".webp", ".svg", ".apng", ".avif"),
     "document": (".pdf", ".djvu", ".doc", ".docx", ".odt", ".html", ".css", ".pptx", ".md", ".chm"),
@@ -52,17 +52,27 @@ paths = {
 
 
 def get_type_from_sfx(file_suffix: str) -> str:
-    '''
-    Vrací typ souboru ze slovníku suffices.
-    '''
+    """Given suffix of the file, return the type of file according to the `suffices` dictionary.
+
+    Args:
+        file_suffix (str): A suffix after the "dot" symbol in filename, i.e.: ".avi", ".pdf", ".txt"
+
+    Returns:
+        str: "directory", "audio", "video", "img", "document", "musescore", "zipfile"
+    """
     for type in suffices:
         if file_suffix in suffices[type]:
             return type
 
 def get_path_from_ftype(filetype: str) -> str:
-    '''
-    Vrací cestu, kam bude soubor přesunut.
-    '''
+    """Given filetype from `get_type_from_sfx`, return the path for the file according to the `paths` dictionary.
+
+    Args:
+        filetype (str): "directory", "audio", "video", "img", "document", "musescore", "zipfile"
+
+    Returns:
+        str: A path from the `paths` dictionary.
+    """
     return f"{root_path}/{paths[filetype]}/"
 
 def organize_files():
@@ -82,6 +92,8 @@ def organize_files():
 
 
 def set_directory():
+    """Change the directory if necessary.
+    """
     escape_sequences = {"exit", "stop", "break", "exit()", "konec"}
     
     while True:
@@ -100,7 +112,8 @@ def escape():
     print("Hezký den i Vám.")
     exit()
 
-def printintro():
+def print_intro():
+    """Print the cool header and the program description."""
     print(color.GREEN + """
   ____  _____   _____          _   _ _____ ____________ 
  / __ \|  __ \ / ____|   /\   | \ | |_   _|___  /  ____|
@@ -111,20 +124,18 @@ def printintro():
                                                         
                                                        
 Autor: Miroslav Burýšek""" + color.END)
-print("Tento program třídí soubory podle přípon. Zadejte flag -h, --help pro nápovědu.")
+    print("Tento program třídí soubory podle přípon. Zadejte flag -h, --help pro nápovědu.")
 
 
 # MAIN PROGRAM
 
 def main():
-    # intro
-    printintro()
-    # přechod do složky
+    print_intro()
     set_directory()
     print("""Nacházím se ve složce: """ + color.PURPLE +
           color.BOLD + os.getcwd() + color.END)
 
-    # třídění
+    # sorting
     decline_task = ("n", "nn", "ne", "no", "nikdy", "stop")
     approve_task = ("y", "yy", "ano", "yes", "jo", "ok", "pls")
     while True:
