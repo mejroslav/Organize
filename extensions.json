@@ -64,7 +64,8 @@
         ".css",
         ".pptx",
         ".md",
-        ".chm"
+        ".chm",
+        ".txt"
     ],
     "musescore": [
         ".mscz"

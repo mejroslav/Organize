@@ -1,41 +1,27 @@
 #!/usr/bin/env python3
 """
-Tento skript umožní rozřadit soubory podle přípon do složek podle toho, zda je soubor obrázek, video, dokument, musescore nebo zip. 
+Tento skript umožní rozřadit soubory podle přípon.
+
+V souboru `extensions.json` jsou uloženy přípony pro jednotlivé typy souborů.
+V souboru `paths.json` jsou uloženy cílové destinace pro jednotlivé typy souborů.
 """
 
 import organizeFunctions
 import settings
 
-# MAIN PROGRAM
-
-
-def main():
-    # intro
+def main() -> None:
+    "The main function. Organize files in given directory."
     organizeFunctions.print_intro()
-    organizeFunctions.check_for_valid_paths()
+    valid_paths = organizeFunctions.check_for_valid_paths()
+    if not valid_paths:
+        raise Exception("Některé cílové destinace nejsou platné adresy. Můžete je změnit v souboru 'paths.json'.")
     directory = organizeFunctions.set_directory()
-
-    # sorting
-    decline_task = {"n", "nn", "ne", "no", "nikdy", "stop"}
-    approve_task = {"y", "yy", "ano", "yes", "jo", "ok", "pls"}
-    while True:
-        user_approval = input("""Přejete si roztřídit soubory? [y/n] """).lower()
-
-        if user_approval in approve_task:
-            organizeFunctions.organize_files(directory)
-            print(
-                settings.color.BOLD
-                + settings.color.GREEN
-                + "Soubory úspěšně přesunuty."
-                + settings.color.END
-            )
-            break
-        elif user_approval in decline_task:
-            break
-        else:
-            print("Zadejte prosím jeden z požadovaných výrazů [y/n].")
+    approval = organizeFunctions.wait_for_user_approval()
+    if approval:
+        organizeFunctions.organize_files(directory)
     organizeFunctions.escape()
 
 
 if __name__ == "__main__":
+    settings.parse_arguments()
     main()

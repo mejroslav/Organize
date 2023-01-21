@@ -10,4 +10,6 @@ Tento jednoduchý skript umožňuje rozřadit soubory podle jejich přípon (`.p
 
 Přípony jednotlivých souborů se nastavují v souboru `extensions.json`. Cesty do složek, kam se mají soubory přesouvat, se nastavují v souboru `paths.json`.
 
-`python3 main.py` spustí program pro přesouvání.
+`python3 main.py` spustí skript pro přesouvání.
+
+V linuxovém terminálu lze snadno vytvořit alias pro tento skript.
