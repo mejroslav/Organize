@@ -2,6 +2,12 @@
 
 (Written in Czech language.)
 
-Tento jednoduchý pythonovský skript umožňuje rozřadit soubory podle jejich typu (obrázek, audio, video, dokument, ...) a přesouvat je do domovských složek. Užitečný třeba pro automatické rozřazování souborů ze složky "Downloads".
+Tento jednoduchý skript umožňuje rozřadit soubory podle jejich přípon (`.pdf`, `.mp3`, ...) a přesouvat je do domovských složek (`$HOME/Documents`, `$HOME/Audios`, ...). Je užitečný třeba pro automatické rozřazování souborů ze složky `Downloads`.
 
-Cestu do jednotlivých složek si musí uživatel (prozatím) nastavit ručně sám v souboru *organize.py*.
+---
+
+## Použití
+
+Přípony jednotlivých souborů se nastavují v souboru `extensions.json`. Cesty do složek, kam se mají soubory přesouvat, se nastavují v souboru `paths.json`.
+
+`python3 main.py` spustí program pro přesouvání.
