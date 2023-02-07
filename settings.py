@@ -7,10 +7,14 @@ import optparse
 
 # U každého uživatele potřeba změnit!
 ROOT_PATH = os.path.expanduser("~")
+PARENT_FOLDER = os.path.dirname(__file__)
 
-with open("extensions.json", "r", encoding="utf-8") as file:
+EXTENSIONS_FILE = os.path.join(PARENT_FOLDER, "extensions.json")
+PATHS_FILE = os.path.join(PARENT_FOLDER, "paths.json")
+
+with open(EXTENSIONS_FILE, "r", encoding="utf-8") as file:
     extensions = json.loads(file.read())
-with open("paths.json", "r", encoding="utf-8") as file:
+with open(PATHS_FILE, "r", encoding="utf-8") as file:
     paths = json.loads(file.read())
 
 

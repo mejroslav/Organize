@@ -6,8 +6,10 @@ V souboru `extensions.json` jsou uloženy přípony pro jednotlivé typy soubor�
 V souboru `paths.json` jsou uloženy cílové destinace pro jednotlivé typy souborů.
 """
 
+import logging
 import organizeFunctions
 import settings
+
 
 def main() -> None:
     "The main function. Organize files in given directory."

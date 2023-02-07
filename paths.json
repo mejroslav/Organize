@@ -5,5 +5,7 @@
     "img": "Pictures",
     "document": "Documents",
     "musescore": "Documents/MuseScore3Development/Notové zápisy",
-    "zipfile": "Documents"
+    "zipfile": "Documents",
+    "archive": "Archives",
+    "app": "Programs"
 }

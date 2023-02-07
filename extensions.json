@@ -70,7 +70,6 @@
     "musescore": [
         ".mscz"
     ],
-    "zipfile": [
-        ".zip"
-    ]
+    "archive": [".zip", ".tar", ".tgz", ".gz", ".bz2", ".enc", ".ttf"],
+    "app": [".deb", ".AppImage"]
 }
